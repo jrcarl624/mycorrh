@@ -4,6 +4,14 @@ version = "0.1.0"
 edition = "2021"
 license = "MIT"
 description = "Mycorrh is a fast concurrent messaging system for Rust."
+repository = "https://github.com/jrcarl624/mycorrh"
+authors = ["jrcarl624 <jrcarl624@gmail.com>"]
+readme = "README.md"
+keywords = ["messaging", "concurrent", "async", "tokio", "event"]
+categories = ["concurrency", "asynchronous"]
+license-file = "LICENSE"
+publish = true
+documentation = "https://docs.rs/mycorrh"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
