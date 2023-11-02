@@ -9,7 +9,6 @@ pub mod state;
 // }
 
 
-
 #[cfg(test)]
 mod test {
     use std::fmt::{Display, Formatter};
@@ -25,7 +24,6 @@ mod test {
 
     #[derive(Debug)]
     enum TestMessage {
-
         Increment,
         Decrement,
         GetCurrent,
@@ -84,7 +82,7 @@ mod test {
 
     #[derive(Clone)]
     struct TestEventLoop {
-     //   state: Arc<TestState>,
+        //   state: Arc<TestState>,
         event_handle: Arc<RwLock<JoinHandle<Result<TestClose, TestError>>>>,
         message_handle: MessageHandle<TestMessage, TestResponse, TestClose, TestError>,
     }
@@ -122,10 +120,22 @@ mod test {
                                                     }
                                                     // Messages
                                                     TestMessage::GetCurrent=> {
-                                                        message.callback_ok(TestResponse::Current(num)).expect("Failed to send TestResponse::Current")
+                                                        match message.callback_ok(TestResponse::Current(num)) {
+                                                            Ok(_) => {}
+                                                            Err(_) => {
+                                                                #[cfg(debug_assertions)]
+                                                                dbg!("Failed to send TestResponse::Current");
+                                                            }
+                                                }
                                                     }
                                                     TestMessage::GetError => {
-                                                        message.callback_err(TestError::TestError).expect("Failed to send TestError::TestError")
+                                                      match   message.callback_err(TestError::TestError) {
+                                                            Ok(_) => {}
+                                                            Err(_) => {
+                                                                #[cfg(debug_assertions)]
+                                                                dbg!("Failed to send TestError::TestError");
+                                                            }
+                                                }
                                                     }
 
                                                 }
@@ -206,6 +216,7 @@ mod test {
             &self.message_handle
         }
     }
+
     #[async_trait::async_trait]
     impl EventLoop for TestEventLoop {
         type Close = TestClose;
@@ -219,11 +230,10 @@ mod test {
             self.message_handle.is_closed()
         }
 
-        async fn close(&self,reason:Self::Close) -> Result<(), Self::Err> {
+        async fn close(&self, reason: Self::Close) -> Result<(), Self::Err> {
             self.message_handle.close(reason).await.map_err(|_| TestError::AlreadyClosed)
         }
     }
-
 
 
     /// Returns how many successful increments were made
@@ -305,6 +315,5 @@ mod test {
         assert_eq!(test.close(TestClose).await, Ok(()));
 
         assert_eq!(task_1.close(TestClose).await, Err(TestError::AlreadyClosed));
-
     }
 }
