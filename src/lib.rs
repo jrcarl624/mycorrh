@@ -188,7 +188,7 @@ mod test {
                 Err(_e) => Err(TestError::FailedToGetCurrent)
             }
         }
-        // TODO: Make a wrapper proc macro for this, should
+        // TODO: Make a wrapper proc macro for this
 
         pub async fn error_test(&self) -> Result<(), TestError> {
             match self.message_handle.send_message(TestMessage::GetError, "error_test").await {
